@@ -59,7 +59,7 @@ router.post("/signup", (req, res, next) => {
       const user = { email, firstName, lastName, _id };
 
       // Send a json response containing the user object
-      console.log(user);
+
       res.status(201).json({ user: user });
     })
     .catch((err) => next(err));
@@ -94,9 +94,9 @@ router.post("/login", (req, res, next) => {
           algorithm: "HS256",
           expiresIn: "6h",
         });
-
+        const date = new Date().toISOString();
         // Send the token as the response
-        res.status(200).json({ authToken: authToken });
+        res.status(200).json({ authToken: authToken, date: date });
       } else {
         res.status(401).json({ message: "Unable to authenticate the user" });
       }
@@ -106,7 +106,6 @@ router.post("/login", (req, res, next) => {
 router.get("/verify", isAuthenticated, (req, res, next) => {
   // If JWT token is valid the payload gets decoded by the
   // isAuthenticated middleware and made available on `req.payload`
-  console.log(`req.payload`, req.payload);
 
   // Send back the object with user data
   // previously set as the token payload
