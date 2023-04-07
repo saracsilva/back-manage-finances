@@ -94,6 +94,20 @@ router.post("/login", (req, res, next) => {
           algorithm: "HS256",
           expiresIn: "6h",
         });
+        try {
+          // Verify the token and decode its payload
+          const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+          // Check if the token has expired
+          if (decoded.exp <= Math.floor(Date.now() / 1000)) {
+            return res.status(401).json({ message: "Token expired" });
+          }
+
+          // If the token is valid, send the decoded payload as the response
+          res.status(200).json(decoded);
+        } catch (err) {
+          res.status(401).json({ message: "Invalid token" });
+        }
         const date = new Date().toISOString();
         // Send the token as the response
         res.status(200).json({ authToken: authToken, date: date });
